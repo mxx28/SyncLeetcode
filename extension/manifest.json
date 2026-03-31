@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "SyncLeetcode",
-  "version": "1.4.4",
+  "version": "1.7.6",
   "description": "Sync Accepted LeetCode submissions from problem pages to a GitHub repository.",
   "action": {
     "default_popup": "popup.html",

@@ -1,8 +1,7 @@
 const state = document.getElementById('state');
 const openOptions = document.getElementById('openOptions');
 
-openOptions.addEventListener('click', (e) => {
-  e.preventDefault();
+openOptions.addEventListener('click', () => {
   chrome.runtime.openOptionsPage();
 });
 
@@ -102,9 +101,56 @@ function todaySyncBlock(syncDailyStats) {
   )}</div><div class="today-total">${total} unique problem${total === 1 ? '' : 's'}</div></div>`;
 }
 
-function totalSyncBlock(syncLifetimeStats) {
+function lastThreeDayKeys() {
+  const keys = [];
+  for (let i = 2; i >= 0; i -= 1) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    keys.push(localDateKey(d.getTime()));
+  }
+  return keys;
+}
+
+function daySyncTotal(syncDailyStats, dayKey) {
+  const row = syncDailyStats?.[dayKey];
+  if (!row) return 0;
+  return (
+    (Number(row.easy) || 0) +
+    (Number(row.medium) || 0) +
+    (Number(row.hard) || 0) +
+    (Number(row.other) || 0)
+  );
+}
+
+function sparkDayLabel(dayKey) {
+  const todayK = localDateKey();
+  if (dayKey === todayK) return 'Today';
+  const parts = dayKey.split('-').map(Number);
+  const dt = new Date(parts[0], parts[1] - 1, parts[2]);
+  return dt.toLocaleDateString(undefined, { month: 'numeric', day: 'numeric' });
+}
+
+/** Mini bar chart: unique problems synced per day, last 3 local calendar days. */
+function lastThreeDaysSparkHtml(syncDailyStats) {
+  const keys = lastThreeDayKeys();
+  const counts = keys.map((k) => daySyncTotal(syncDailyStats, k));
+  const max = Math.max(1, ...counts);
+  const maxH = 32; /* keep within .spark-bar-track height (popup.html) */
+  const cols = keys
+    .map((key, i) => {
+      const c = counts[i];
+      const hPx = c === 0 ? 4 : Math.max(5, Math.round((c / max) * maxH));
+      const zeroClass = c === 0 ? ' is-zero' : '';
+      const lab = sparkDayLabel(key);
+      return `<div class="spark-col"><div class="spark-bar-track"><div class="spark-bar-fill${zeroClass}" style="height:${hPx}px"></div></div><div class="spark-count">${c}</div><div class="spark-day">${escapeHtml(lab)}</div></div>`;
+    })
+    .join('');
+  return `<div class="spark-section"><div class="spark-heading">Last 3 days · synced</div><div class="spark-bars">${cols}</div></div>`;
+}
+
+function totalSyncBlock(syncLifetimeStats, syncDailyStats) {
   const n = Math.max(0, Number(syncLifetimeStats?.count) || 0);
-  return `<div class="today-stats total-alltime"><div class="today-label">Total sync</div><div class="total-sync-value">${n} unique problem${n === 1 ? '' : 's'}</div><div class="today-muted total-sync-hint">All-time · once per problem</div></div>`;
+  return `<div class="today-stats total-alltime"><div class="today-label">Total sync</div><div class="total-sync-value">${n} unique problem${n === 1 ? '' : 's'}</div><div class="today-muted total-sync-hint">All-time · once per problem</div>${lastThreeDaysSparkHtml(syncDailyStats)}</div>`;
 }
 
 chrome.storage.local
@@ -149,7 +195,7 @@ chrome.storage.local
     }
 
     inner += todaySyncBlock(s.syncDailyStats);
-    inner += totalSyncBlock(s.syncLifetimeStats);
+    inner += totalSyncBlock(s.syncLifetimeStats, s.syncDailyStats);
 
     state.innerHTML = inner;
 

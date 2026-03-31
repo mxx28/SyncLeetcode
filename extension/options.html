@@ -129,13 +129,6 @@
         font-family: ui-sans-serif, system-ui, sans-serif;
       }
 
-      /* PAT looks clearer in monospace without dominating the layout */
-      #githubToken {
-        font-family: ui-monospace, 'SF Mono', Menlo, monospace;
-        font-size: 12px;
-        letter-spacing: -0.02em;
-      }
-
       input::placeholder {
         color: #8a96a8;
         font-weight: 400;
@@ -152,6 +145,18 @@
         color: var(--muted);
         margin-top: 8px;
         line-height: 1.5;
+      }
+
+      .hint a,
+      .hint-list a {
+        color: var(--accent);
+        font-weight: 600;
+        text-decoration: none;
+      }
+
+      .hint a:hover,
+      .hint-list a:hover {
+        text-decoration: underline;
       }
 
       .hint code,
@@ -180,6 +185,47 @@
         margin-bottom: 0;
       }
 
+      /* PAT permission lines: soft “note” callout */
+      ul.pat-hint-note {
+        margin: 10px 0 0;
+        padding: 10px 12px 10px 14px;
+        list-style: none;
+        font-size: 11.5px;
+        line-height: 1.55;
+        color: #7a8799;
+        background: linear-gradient(135deg, rgba(90, 106, 125, 0.06) 0%, rgba(242, 245, 249, 0.9) 100%);
+        border: 1px solid rgba(208, 218, 230, 0.75);
+        border-left: 3px solid rgba(26, 124, 62, 0.28);
+        border-radius: 0 8px 8px 0;
+      }
+
+      ul.pat-hint-note li {
+        margin-bottom: 6px;
+        padding-left: 0.65rem;
+        position: relative;
+      }
+
+      ul.pat-hint-note li::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0.55em;
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: rgba(90, 106, 125, 0.35);
+      }
+
+      ul.pat-hint-note li:last-child {
+        margin-bottom: 0;
+      }
+
+      ul.pat-hint-note code {
+        background: rgba(255, 255, 255, 0.7);
+        border-color: rgba(208, 218, 230, 0.9);
+        color: #4a5a6e;
+      }
+
       /* ----- Checkboxes ----- */
       .check-row {
         display: flex;
@@ -205,8 +251,73 @@
         color: var(--accent);
       }
 
-      .check-row span {
+      .check-row .check-row-text {
         flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        min-width: 0;
+      }
+
+      .check-row .check-row-note {
+        font-size: 12px;
+        font-weight: 400;
+        color: var(--muted);
+        line-height: 1.45;
+      }
+
+      .behavior-notify-callout {
+        margin-top: 16px;
+        padding: 12px 14px;
+        border-radius: 0 8px 8px 0;
+        border: 1px solid rgba(208, 218, 230, 0.75);
+        border-left: 3px solid rgba(26, 124, 62, 0.28);
+        background: linear-gradient(135deg, rgba(90, 106, 125, 0.06) 0%, rgba(242, 245, 249, 0.95) 100%);
+      }
+
+      .behavior-notify-callout__line {
+        margin: 0 0 10px;
+        font-size: 12px;
+        line-height: 1.5;
+        color: #7a8799;
+      }
+
+      .behavior-notify-callout__line:last-of-type {
+        margin-bottom: 0;
+      }
+
+      .behavior-notify-callout__actions {
+        margin: 12px 0 0;
+        padding-top: 12px;
+        border-top: 1px dashed rgba(208, 218, 230, 0.9);
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px 10px;
+      }
+
+      .btn-inline {
+        padding: 6px 12px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--surface2);
+        color: var(--text);
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: inherit;
+      }
+
+      .btn-inline:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+
+      .test-notify-hint {
+        font-size: 12px;
+        color: var(--muted);
+        flex: 1 1 12rem;
+        min-width: 0;
       }
 
       /* ----- Save ----- */
@@ -246,10 +357,206 @@
       #status.err {
         color: var(--danger);
       }
+
+      .settings-root.is-hidden {
+        display: none !important;
+      }
+
+      .save-success-screen {
+        display: none;
+        min-height: 100vh;
+        padding: 28px 18px 48px;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+      }
+
+      .save-success-screen.is-visible {
+        display: flex;
+      }
+
+      .save-success-card {
+        max-width: 520px;
+        width: 100%;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 28px 24px 22px;
+        box-shadow: 0 8px 32px rgba(26, 35, 50, 0.1);
+        text-align: center;
+      }
+
+      .save-success-hero-wrap {
+        display: flex;
+        justify-content: center;
+        margin: 0 0 20px;
+      }
+
+      .save-success-hero {
+        width: 88px;
+        height: 88px;
+        border-radius: 22px;
+        object-fit: contain;
+        border: 1px solid var(--border);
+        box-shadow: 0 10px 28px rgba(26, 124, 62, 0.18);
+        background: linear-gradient(160deg, #f6faf7 0%, #fff 100%);
+      }
+
+      .save-success-title {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        margin: 0 0 18px;
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: var(--accent);
+        letter-spacing: -0.02em;
+      }
+
+      .save-success-title-icon {
+        flex-shrink: 0;
+        color: var(--accent-bright);
+      }
+
+      .save-success-card .lead {
+        margin: 0 0 20px;
+        font-size: 15px;
+        line-height: 1.55;
+        color: var(--text);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .save-success-card .lead .lead-line {
+        display: block;
+        max-width: 34ch;
+        margin: 0;
+      }
+
+      .save-success-card .lead .lead-line--signoff {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--muted);
+      }
+
+      .lead-rocket {
+        display: inline-block;
+        margin-left: 2px;
+        font-size: 1.15em;
+        line-height: 1;
+        vertical-align: 0.05em;
+      }
+
+      .save-success-card .sub {
+        margin: 0 0 16px;
+        font-size: 13px;
+        line-height: 1.5;
+        color: var(--muted);
+      }
+
+      .save-success-card .repo-line {
+        margin: 0 0 20px;
+        padding: 14px 16px;
+        border-radius: 10px;
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        font-size: 13px;
+        text-align: center;
+      }
+
+      .repo-line-header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--muted);
+        margin-bottom: 8px;
+      }
+
+      .repo-line-header svg {
+        flex-shrink: 0;
+        color: var(--accent);
+        opacity: 0.9;
+      }
+
+      .save-success-card .repo-line a {
+        font-weight: 600;
+        color: var(--accent);
+        word-break: break-all;
+        text-decoration: none;
+      }
+
+      .save-success-card .repo-line a:hover {
+        text-decoration: underline;
+      }
+
+      .save-success-feedback {
+        margin: 0 0 22px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        font-size: 12px;
+        color: var(--muted);
+        line-height: 1.55;
+      }
+
+      .save-success-feedback svg {
+        flex-shrink: 0;
+        color: var(--accent);
+        opacity: 0.85;
+      }
+
+      .save-success-feedback p {
+        margin: 0;
+        max-width: 38ch;
+      }
+
+      .save-success-feedback a {
+        color: var(--accent);
+        font-weight: 600;
+        text-decoration: none;
+      }
+
+      .save-success-feedback a:hover {
+        text-decoration: underline;
+      }
+
+      button#saveSuccessDismiss {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 10px 20px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: var(--surface2);
+        color: var(--text);
+        font-weight: 600;
+        font-size: 13px;
+        cursor: pointer;
+        font-family: inherit;
+      }
+
+      button#saveSuccessDismiss:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+
+      button#saveSuccessDismiss svg {
+        flex-shrink: 0;
+        opacity: 0.85;
+      }
     </style>
   </head>
   <body>
-    <div class="wrap">
+    <div class="wrap settings-root" id="settingsRoot">
       <!-- App branding: uses extension package icon -->
       <header>
         <img src="icons/icon128.png" alt="SyncLeetcode" />
@@ -279,9 +586,14 @@
           </label>
           <input id="githubToken" type="password" autocomplete="off" placeholder="ghp_… or fine-grained token" />
           <p class="hint">
-            Create at <strong>GitHub → Settings → Developer settings → Personal access tokens</strong>.
+            <strong>Create a new token:</strong>
+            <a href="https://github.com/settings/tokens/new" target="_blank" rel="noopener noreferrer">New classic token</a>
+            <span aria-hidden="true"> · </span>
+            <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener noreferrer">New fine-grained token</a>
+            <br />
+            or <strong>Browse</strong> GitHub → Settings → Developer settings → Personal access tokens.
           </p>
-          <ul class="hint-list">
+          <ul class="hint-list pat-hint-note" aria-label="Token permission notes">
             <li>
               Classic: enable <code>repo</code> (or <code>public_repo</code> for public repos only).
             </li>
@@ -301,8 +613,8 @@
           Target repository
         </h2>
         <p class="hint" style="margin: -8px 0 16px">
-          <strong>Create the repository on GitHub first</strong> (empty repo is fine), then enter its owner and name
-          here. This extension does not create repos for you.
+          <strong>Create the repository on GitHub first</strong>.<br />
+          <strong>Empty</strong> or <strong>private</strong> repo is fine.
         </p>
 
         <div class="field">
@@ -380,13 +692,116 @@
           <svg class="check-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
           </svg>
-          <span><strong>Automatic sync</strong> — push to GitHub on Accepted.</span>
+          <span class="check-row-text">
+            <strong>Automatic sync</strong>
+            <span class="check-row-note">Push to GitHub on Accepted.</span>
+          </span>
         </label>
+        <label class="check-row">
+          <input id="syncFolderReadme" type="checkbox" checked />
+          <svg class="check-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="16" y1="13" x2="8" y2="13" />
+            <line x1="16" y1="17" x2="8" y2="17" />
+          </svg>
+          <span class="check-row-text">
+            <strong>README &amp; activity chart at repo root</strong>
+            <span class="check-row-note"
+              ><em
+                >Refreshes <code>README.md</code> + <code>syncl-activity.svg</code> each sync. Turn off if you keep a
+                custom README.</em
+              ></span
+            >
+          </span>
+        </label>
+        <label class="check-row">
+          <input id="notifyOnSyncSuccess" type="checkbox" checked />
+          <svg class="check-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+          </svg>
+          <span class="check-row-text">
+            <strong>Notify when a submission is pushed to GitHub</strong>
+            <span class="check-row-note">System notification; allow notifications for this extension.</span>
+          </span>
+        </label>
+        <label class="check-row">
+          <input id="notifyOnSyncFailure" type="checkbox" checked />
+          <svg class="check-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+            <line x1="12" y1="9" x2="12" y2="13" />
+            <line x1="12" y1="17" x2="12.01" y2="17" />
+          </svg>
+          <span class="check-row-text">
+            <strong>Notify when GitHub push fails</strong>
+            <span class="check-row-note">So you can fix token, repo, or network.</span>
+          </span>
+        </label>
+
+        <div class="behavior-notify-callout" role="note" aria-label="About desktop notifications">
+          <p class="behavior-notify-callout__line">
+            Success/failure alerts use your <strong>operating system’s notifications</strong> .
+          </p>
+          <p class="behavior-notify-callout__line">
+            Allow notifications for your browser (e.g. Chrome, Edge) in <strong>system settings</strong>.
+          </p>
+          <div class="behavior-notify-callout__actions">
+            <button type="button" id="testDesktopNotify" class="btn-inline">Send test notification</button>
+            <span id="testNotifyHint" class="test-notify-hint" aria-live="polite"></span>
+          </div>
+        </div>
       </section>
 
       <div class="actions">
         <button type="button" id="save">Save settings</button>
         <div id="status" role="status" aria-live="polite"></div>
+      </div>
+    </div>
+
+    <div class="save-success-screen" id="saveSuccessScreen">
+      <div class="save-success-card">
+        <div class="save-success-hero-wrap">
+          <img class="save-success-hero" src="icons/icon128.png" alt="" width="88" height="88" />
+        </div>
+        <h2 class="save-success-title">
+          <svg class="save-success-title-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+            <polyline points="22 4 12 14.01 9 11.01" />
+          </svg>
+          <span>Settings saved</span>
+        </h2>
+        <p class="lead">
+          <span class="lead-line">Enjoy coding on LeetCode <span class="lead-rocket" aria-hidden="true">🚀</span></span>
+        </p>
+        <p class="sub" id="saveSuccessRepoMissing" hidden>You can add your repository (owner + name) anytime in settings below.</p>
+        <div class="repo-line" id="saveSuccessRepoBlock" hidden>
+          <div class="repo-line-header">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <ellipse cx="12" cy="12" rx="10" ry="4" />
+              <path d="M2 12v4c0 2.2 4.5 4 10 4s10-1.8 10-4v-4M2 8v4c0 2.2 4.5 4 10 4s10-1.8 10-4V8" />
+            </svg>
+            <span>Your sync target</span>
+          </div>
+          <a id="saveSuccessRepoLink" href="#" target="_blank" rel="noopener noreferrer"></a>
+        </div>
+        <div class="save-success-feedback">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+          </svg>
+          <p>
+            Run into issues or have ideas?<br />
+            <a id="saveSuccessFeedbackLink" href="https://github.com/mxx28/SynLeetcode/issues" target="_blank" rel="noopener noreferrer">Open an issue</a>
+            on the extension repository — we’re happy to hear from you.
+          </p>
+        </div>
+        <button type="button" id="saveSuccessDismiss">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="12" cy="12" r="3" />
+            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+          </svg>
+          Back to settings
+        </button>
       </div>
     </div>
 
