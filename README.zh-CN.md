@@ -27,6 +27,7 @@ SyncLeetcode 是一个 **Chrome 扩展**，会把你在 LeetCode 上 **Accepted*
 ## 功能
 
 - **Accepted 自动推送**：每次题目运行结果为 **Accepted** 时，都会写入一个解答文件；同一题再次 AC 会原地覆盖。
+- **🚀 NEW! 弹窗 Open Sync**：在**扩展弹出页**即可开关自动同步（与设置里的 **Automatic sync** 是同一项）。关闭后 **Accepted** 不会推送，适合想减少 GitHub 上 commit 的时候。
 - **同时支持 leetcode.com 和 leetcode.cn**：兼容当前两个站点的题目页面。
 - **动态更新仓库 README（可选）**：自动刷新徽章、标题和活动图表，让你的刷题进度直接展示在 GitHub 上。
 - **桌面通知（可选）**：每次推送成功或失败都会通知你，不需要猜 GitHub 有没有收到。

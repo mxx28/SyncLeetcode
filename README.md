@@ -27,6 +27,7 @@ The idea comes from **[LeetSync](https://github.com/3ba2ii/LeetSync)** and simil
 ## Features
 
 - **Accepted → pushed** — Each **Accepted** run writes one solution file; AC the same problem again and it overwrites in place.  
+- **[🚀 NEW] Open Sync (popup)** — When off, **Accepted** runs won’t push—handy if you want fewer commits on GitHub.  
 - **leetcode.com & leetcode.cn** — Works on current problem pages for both sites.  
 - **Living repo README (optional)** — Auto-refreshed badges, headline, and activity chart so your progress is visible on GitHub.  
 - **Desktop notifications (optional)** — Success or failure pings for every push—you’re not left guessing whether GitHub got the file.  

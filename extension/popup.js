@@ -1,8 +1,94 @@
 const state = document.getElementById('state');
 const openOptions = document.getElementById('openOptions');
+const popupSyncEnabled = document.getElementById('popupSyncEnabled');
 
 openOptions.addEventListener('click', () => {
   chrome.runtime.openOptionsPage();
+});
+
+const POPUP_STORAGE_KEYS = [
+  'enabled',
+  'githubOwner',
+  'githubRepo',
+  'lastSyncAt',
+  'lastSyncPath',
+  'lastSyncOk',
+  'lastSyncError',
+  'syncDailyStats',
+  'syncLifetimeStats',
+];
+
+function renderPopupFromStorage(s) {
+  if (popupSyncEnabled) {
+    popupSyncEnabled.checked = s.enabled !== false;
+  }
+
+  if (!s.githubOwner || !s.githubRepo) {
+    state.innerHTML =
+      '<p class="hint-warn">Add your GitHub token and repository in settings first.</p>';
+    return;
+  }
+
+  const repo = `${escapeHtml(s.githubOwner)}/${escapeHtml(s.githubRepo)}`;
+  let inner = '';
+
+  if (s.enabled === false) {
+    inner += `<div class="sync-paused-banner">Sync is <strong>off</strong> — <strong>Accepted</strong> submissions won’t be pushed.</div>`;
+  }
+
+  inner += `<div class="repo-pill">${iconRepo}<span>${repo}</span></div>`;
+
+  if (s.lastSyncAt) {
+    const t = formatLocalDateTime24h(s.lastSyncAt);
+    if (s.lastSyncOk) {
+      const path = escapeHtml(s.lastSyncPath || '');
+      inner += `<div class="status-block ok">${iconOk}<div><div class="time">Last sync · ${escapeHtml(t)}</div><div class="path">${path}</div></div></div>`;
+    } else {
+      const { friendly, detail } = parseGithubError(s.lastSyncError);
+      inner += `<div class="status-block err">${iconErr}<div><div class="time">${escapeHtml(t)}</div><div class="friendly">${escapeHtml(friendly)}</div><div class="detail">${detail}</div></div></div>`;
+    }
+  } else {
+    inner +=
+      '<p class="hint-muted">No sync yet. Solve a problem and get <strong>Accepted</strong>.</p>';
+    inner += '<p id="sync-verify" class="hint-sub">Checking GitHub…</p>';
+  }
+
+  inner += todaySyncBlock(s.syncDailyStats);
+  inner += totalSyncBlock(s.syncLifetimeStats, s.syncDailyStats);
+
+  state.innerHTML = inner;
+
+  if (s.enabled !== false && s.githubOwner && s.githubRepo && !s.lastSyncAt) {
+    chrome.runtime.sendMessage({ type: 'sync-verify-github' }, (resp) => {
+      const line = document.getElementById('sync-verify');
+      if (!line) return;
+      if (chrome.runtime.lastError) {
+        line.textContent = 'Could not check GitHub. Try again or open settings.';
+        line.className = 'hint-warn hint-below';
+        return;
+      }
+      if (resp?.ok) {
+        line.remove();
+        return;
+      }
+      const { friendly } = parseGithubError(resp?.error || '');
+      line.textContent = friendly;
+      line.className = 'hint-warn hint-below';
+    });
+  }
+}
+
+function refreshPopup() {
+  chrome.storage.local.get(POPUP_STORAGE_KEYS).then(renderPopupFromStorage);
+}
+
+popupSyncEnabled?.addEventListener('change', () => {
+  chrome.storage.local.set({ enabled: popupSyncEnabled.checked }, () => refreshPopup());
+});
+
+chrome.storage.onChanged.addListener((changes, area) => {
+  if (area !== 'local' || changes.enabled === undefined) return;
+  refreshPopup();
 });
 
 function escapeHtml(s) {
@@ -153,68 +239,4 @@ function totalSyncBlock(syncLifetimeStats, syncDailyStats) {
   return `<div class="today-stats total-alltime"><div class="today-label">Total sync</div><div class="total-sync-value">${n} unique problem${n === 1 ? '' : 's'}</div><div class="today-muted total-sync-hint">All-time · once per problem</div>${lastThreeDaysSparkHtml(syncDailyStats)}</div>`;
 }
 
-chrome.storage.local
-  .get([
-    'enabled',
-    'githubOwner',
-    'githubRepo',
-    'lastSyncAt',
-    'lastSyncPath',
-    'lastSyncOk',
-    'lastSyncError',
-    'syncDailyStats',
-    'syncLifetimeStats',
-  ])
-  .then((s) => {
-    if (s.enabled === false) {
-      state.innerHTML = '<p class="hint-muted">Auto-sync is off. Turn it on in settings when you are ready.</p>';
-      return;
-    }
-    if (!s.githubOwner || !s.githubRepo) {
-      state.innerHTML =
-        '<p class="hint-warn">Add your GitHub token and repository in settings first.</p>';
-      return;
-    }
-
-    const repo = `${escapeHtml(s.githubOwner)}/${escapeHtml(s.githubRepo)}`;
-    let inner = `<div class="repo-pill">${iconRepo}<span>${repo}</span></div>`;
-
-    if (s.lastSyncAt) {
-      const t = formatLocalDateTime24h(s.lastSyncAt);
-      if (s.lastSyncOk) {
-        const path = escapeHtml(s.lastSyncPath || '');
-        inner += `<div class="status-block ok">${iconOk}<div><div class="time">Last sync · ${escapeHtml(t)}</div><div class="path">${path}</div></div></div>`;
-      } else {
-        const { friendly, detail } = parseGithubError(s.lastSyncError);
-        inner += `<div class="status-block err">${iconErr}<div><div class="time">${escapeHtml(t)}</div><div class="friendly">${escapeHtml(friendly)}</div><div class="detail">${detail}</div></div></div>`;
-      }
-    } else {
-      inner +=
-        '<p class="hint-muted">No sync yet. Solve a problem and get <strong>Accepted</strong>.</p>';
-      inner += '<p id="sync-verify" class="hint-sub">Checking GitHub…</p>';
-    }
-
-    inner += todaySyncBlock(s.syncDailyStats);
-    inner += totalSyncBlock(s.syncLifetimeStats, s.syncDailyStats);
-
-    state.innerHTML = inner;
-
-    if (s.enabled !== false && s.githubOwner && s.githubRepo && !s.lastSyncAt) {
-      chrome.runtime.sendMessage({ type: 'sync-verify-github' }, (resp) => {
-        const line = document.getElementById('sync-verify');
-        if (!line) return;
-        if (chrome.runtime.lastError) {
-          line.textContent = 'Could not check GitHub. Try again or open settings.';
-          line.className = 'hint-warn hint-below';
-          return;
-        }
-        if (resp?.ok) {
-          line.remove();
-          return;
-        }
-        const { friendly } = parseGithubError(resp?.error || '');
-        line.textContent = friendly;
-        line.className = 'hint-warn hint-below';
-      });
-    }
-  });
+refreshPopup();
